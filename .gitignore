@@ -2,4 +2,4 @@ node_modules/
 .env
 .DS_Store
 npm-debug.log
-giku-app-firebase-adminsdk-j9qxz-1e9f51b3fc.json
+serviceAccountKey.json

@@ -1,5 +1,6 @@
 require("dotenv").config();
 
+const { getFirestore } = require("firebase-admin/firestore");
 const admin = require("firebase-admin");
 const path = require("path");
 const serviceAccountPath = process.env.GOOGLE_APPLICATION_CREDENTIALS;
@@ -9,5 +10,6 @@ admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
 });
 
-const db = admin.firestore();
+const db = getFirestore("giku-db");
+
 module.exports = db;

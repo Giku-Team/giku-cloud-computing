@@ -45,6 +45,8 @@ router.post("/register", async (req, res) => {
  * @swagger
  * /auth/register:
  *   post:
+ *     tags:
+ *       - Authentication
  *     summary: Register a new user
  *     requestBody:
  *       required: true
@@ -106,7 +108,7 @@ router.post("/login", async (req, res) => {
     );
     res.json({ code: 200, message: "Login Successful", token });
   } catch (error) {
-    res.status(500).json({ message: "Error saat login", error });
+    res.status(500).json({ code: 500, message: "Error saat login", error });
   }
 });
 
@@ -114,6 +116,8 @@ router.post("/login", async (req, res) => {
  * @swagger
  * /auth/login:
  *   post:
+ *     tags:
+ *       - Authentication
  *     summary: Login a user
  *     requestBody:
  *       required: true
@@ -129,7 +133,7 @@ router.post("/login", async (req, res) => {
  *     responses:
  *       200:
  *         description: Successful login
- *       401:
+ *       400:
  *         description: Invalid credentials
  */
 
