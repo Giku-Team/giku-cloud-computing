@@ -6,6 +6,15 @@ const db = require("../config/firebase");
 const router = express.Router();
 const SECRET_KEY = process.env.JWT_SECRET;
 
+// Middleware to handle request timeout (408)
+router.use((req, res, next) => {
+  req.setTimeout(20000, () => {
+    // Timeout setelah 20 detik
+    res.status(408).json({ code: 408, message: "Request Timeout" });
+  });
+  next();
+});
+
 // Register
 router.post("/register", async (req, res) => {
   const { email, password, name } = req.body;
@@ -66,9 +75,11 @@ router.post("/register", async (req, res) => {
  *         description: User registered successfully
  *       400:
  *         description: User already exists
+ *       408:
+ *         description: Request Timeout
+ *       500:
+ *         description: Internal server error
  */
-
-// Login isi dibawah ini
 
 // Endpoint Login
 router.post("/login", async (req, res) => {
@@ -108,7 +119,9 @@ router.post("/login", async (req, res) => {
     );
     res.json({ code: 200, message: "Login Successful", token });
   } catch (error) {
-    res.status(500).json({ code: 500, message: "Error saat login", error });
+    res
+      .status(500)
+      .json({ code: 500, message: "Internal server error", error });
   }
 });
 
@@ -135,6 +148,10 @@ router.post("/login", async (req, res) => {
  *         description: Successful login
  *       400:
  *         description: Invalid credentials
+ *       408:
+ *         description: Request Timeout
+ *       500:
+ *         description: Internal server error
  */
 
 module.exports = router;
