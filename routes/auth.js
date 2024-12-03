@@ -2,11 +2,26 @@ const express = require("express");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const db = require("../config/firebase");
+<<<<<<< HEAD
 const { updatePassword } = require('../controllers/authController');
+=======
+>>>>>>> 36ce8f2d47dabe0ef93cf54176e3edbc9d3b4529
 
 const router = express.Router();
 const SECRET_KEY = process.env.JWT_SECRET;
 
+<<<<<<< HEAD
+=======
+// Middleware to handle request timeout (408)
+router.use((req, res, next) => {
+  req.setTimeout(20000, () => {
+    // Timeout setelah 20 detik
+    res.status(408).json({ code: 408, message: "Request Timeout" });
+  });
+  next();
+});
+
+>>>>>>> 36ce8f2d47dabe0ef93cf54176e3edbc9d3b4529
 // Register
 router.post("/register", async (req, res) => {
   const { email, password, name } = req.body;
@@ -67,10 +82,19 @@ router.post("/register", async (req, res) => {
  *         description: User registered successfully
  *       400:
  *         description: User already exists
+<<<<<<< HEAD
  */
 
 // Login isi dibawah ini
 
+=======
+ *       408:
+ *         description: Request Timeout
+ *       500:
+ *         description: Internal server error
+ */
+
+>>>>>>> 36ce8f2d47dabe0ef93cf54176e3edbc9d3b4529
 // Endpoint Login
 router.post("/login", async (req, res) => {
   const { email, password } = req.body;
@@ -109,7 +133,13 @@ router.post("/login", async (req, res) => {
     );
     res.json({ code: 200, message: "Login Successful", token });
   } catch (error) {
+<<<<<<< HEAD
     res.status(500).json({ code: 500, message: "Error saat login", error });
+=======
+    res
+      .status(500)
+      .json({ code: 500, message: "Internal server error", error });
+>>>>>>> 36ce8f2d47dabe0ef93cf54176e3edbc9d3b4529
   }
 });
 
@@ -136,6 +166,7 @@ router.post("/login", async (req, res) => {
  *         description: Successful login
  *       400:
  *         description: Invalid credentials
+<<<<<<< HEAD
  */
 
 // endpoint update password
@@ -218,5 +249,12 @@ const updatePassword = async (req, res) => {
 router.post('/update-password', updatePassword);
 
 module.exports = { updatePassword };
+=======
+ *       408:
+ *         description: Request Timeout
+ *       500:
+ *         description: Internal server error
+ */
+>>>>>>> 36ce8f2d47dabe0ef93cf54176e3edbc9d3b4529
 
 module.exports = router;
