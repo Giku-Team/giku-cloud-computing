@@ -7,6 +7,20 @@ const swaggerDefinition = {
     version: "1.0.0",
     description: "API Documentation for Giku App",
   },
+  components: {
+    securitySchemes: {
+      BearerAuth: {
+        type: "http",
+        scheme: "bearer",
+        bearerFormat: "JWT", // Format token
+      },
+    },
+  },
+  security: [
+    {
+      BearerAuth: [], // Terapkan secara global
+    },
+  ],
   servers: [
     {
       url: "http://localhost:8080",

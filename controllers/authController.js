@@ -50,19 +50,16 @@ const forgotPassword = async (req, res) => {
   }
 };
 
-const resetPassword = async (req, res) => {
-  const { email, verificationCode, newPassword } = req.body;
+const validateResetCode = async (req, res) => {
+  const { email, verificationCode } = req.body;
   const verificationCodeUpperCase = verificationCode.toUpperCase();
 
   try {
     // Cari user berdasarkan email
-    const userSnapshot = await db
-      .collection("users")
-      .where("email", "==", email)
-      .get();
+    const userSnapshot = await db.collection('users').where('email', '==', email).get();
 
     if (userSnapshot.empty) {
-      return res.status(404).json({ code: 404, message: "User not found" });
+      return res.status(404).json({ message: 'User not found' });
     }
 
     const userDoc = userSnapshot.docs[0];
@@ -83,21 +80,60 @@ const resetPassword = async (req, res) => {
         .json({ code: 410, message: "Expired verification code" });
     }
 
-    // Hash password baru
-    const hashedPassword = await bcrypt.hash(newPassword, 10);
-
-    // Update password di Firestore dan hapus kode verifikasi
-    await db.collection("users").doc(userId).update({
-      password: hashedPassword,
+    // Menambahkan flag sementara `isVerifiedForReset` di Firestore
+    await db.collection('users').doc(userId).update({
+      isVerifiedForReset: true,
+      isVerifiedForResetExpire: Date.now() + 60 * 60 * 1000,
       resetCode: admin.firestore.FieldValue.delete(),
       resetCodeExpire: admin.firestore.FieldValue.delete(),
     });
 
-    res.status(200).json({ code: 200, message: "Password updated successfully" });
+    res.status(200).json({ code: 200, message: 'Verification successful' });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ code: 500, message: "Internal server error" });
+    res.status(500).json({ code: 500, message: 'Internal server error' });
   }
 };
 
-module.exports = { forgotPassword, resetPassword };
+const resetPassword = async (req, res) => {
+  const { email, newPassword } = req.body;
+
+  try {
+    // Cari user berdasarkan email
+    const userSnapshot = await db.collection('users').where('email', '==', email).get();
+
+    if (userSnapshot.empty) {
+      return res.status(404).json({ code: 404, message: 'User not found' });
+    }
+
+    const userDoc = userSnapshot.docs[0];
+    const userId = userDoc.id;
+    const userData = userDoc.data();
+
+    // Periksa apakah user sudah diverifikasi
+    if (!userData.isVerifiedForReset) {
+      return res.status(403).json({ code: 403, message: 'Verification required before resetting password' });
+    }
+
+    if (userData.isVerifiedForResetExpire < Date.now()) {
+      return res.status(410).json({ code: 410, message: 'The reset time has expired' });
+    }
+
+    // Hash password baru
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    // Update password di Firestore dan hapus flag verifikasi
+    await db.collection('users').doc(userId).update({
+      password: hashedPassword,
+      isVerifiedForReset: admin.firestore.FieldValue.delete(),
+      isVerifiedForResetExpire: admin.firestore.FieldValue.delete(),
+    });
+
+    res.status(200).json({ code: 200, message: 'Password updated successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ code: 500, message: 'Internal server error' });
+  }
+};
+
+module.exports = { forgotPassword, validateResetCode, resetPassword };

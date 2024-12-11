@@ -5,6 +5,7 @@ const db = require("../config/firebase");
 const {
   forgotPassword,
   resetPassword,
+  validateResetCode,
 } = require("../controllers/authController");
 
 const router = express.Router();
@@ -186,12 +187,12 @@ router.post("/forgot-password", forgotPassword);
  *         description: Internal server error
  */
 
-router.post("/reset-password", resetPassword);
+router.post("/validate-reset-code", validateResetCode);
 /**
  * @swagger
- * /auth/reset-password:
+ * /auth/validate-reset-code:
  *   post:
- *     summary: Validate verification code and reset password
+ *     summary: Validate verification code
  *     tags: [Authentication]
  *     requestBody:
  *       required: true
@@ -206,12 +207,9 @@ router.post("/reset-password", resetPassword);
  *               verificationCode:
  *                 type: string
  *                 example: "A1B2C"
- *               newPassword:
- *                 type: string
- *                 example: new_secure_password
  *     responses:
  *       200:
- *         description: Password updated successfully
+ *         description: Verification successful
  *       400:
  *         description: Invalid verification code
  *       404:
@@ -220,6 +218,41 @@ router.post("/reset-password", resetPassword);
  *         description: Request Timeout
  *       410:
  *         description: Expired verification code
+ *       500:
+ *         description: Internal server error
+ */
+
+router.post("/reset-password", resetPassword);
+/**
+ * @swagger
+ * /auth/reset-password:
+ *   post:
+ *     summary: Reset password
+ *     tags: [Authentication]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 example: user@example.com
+ *               newPassword:
+ *                 type: string
+ *                 example: "NewPassword123"
+ *     responses:
+ *       200:
+ *         description: Password updated successfully
+ *       403:
+ *         description: Verification required before resetting password
+ *       404:
+ *         description: User not found
+ *       408:
+ *         description: Request Timeout
+ *       410:
+ *         description: The reset time has expired
  *       500:
  *         description: Internal server error
  */
