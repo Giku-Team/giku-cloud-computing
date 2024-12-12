@@ -1,68 +1,39 @@
 const express = require("express");
 const router = express.Router();
-const { addArticle, getArticle } = require("../controllers/articleController");
-const multer = require("multer");
-const storage = multer.memoryStorage();
-const upload = multer({ storage });
+const { getArticle } = require("../controllers/articleController");
 /**
  * @swagger
- * /api/users/{userId}/article:
- *  post:
- *    summary: Add an article for a specific user
- *    tags:
- *      - Article
- *    security:
- *      - BearerAuth: []
- *    parameters:
- *      - name: userId
- *        in: path
- *        required: true
- *        description: The ID of the user
- *        schema:
- *          type: string
- *    requestBody:
- *      required: true
- *      content:
- *        multipart/form-data:
- *          schema:
- *            type: object
- *            properties:
- *              title:
- *                type: string
- *                example: "My First Article"
- *              content:
- *                type: string
- *                example: "This is the content of the article."
- *              image:
- *                type: string
- *                format: binary
- *    responses:
- *      201:
- *        description: Article added successfully
- *      500:
- *        description: Internal server error
- *  get:
- *    summary: Get all article for a specific user
- *    tags:
- *      - Article
- *    security:
- *      - BearerAuth: []
- *    parameters:
- *      - name: userId
- *        in: path
- *        required: true
- *        schema:
- *          type: string
- *    responses:
- *      200:
- *        description: List of article
- *      404:
- *        description: No article found
- *      500:
- *        description: Internal server error
+ * /api/articles:
+ *   get:
+ *     summary: Get All Article
+ *     description: Fetches all articles from the database, ordered by date in descending order.
+ *     tags:
+ *       - Article
+ *     responses:
+ *       200:
+ *         description: Successful response with the list of articles
+ *         content:
+ *           application/json:
+ *             example:
+ *               code: 200
+ *               data:
+ *                 - id: "CkGhy0cEtuuXL3rSiebv"
+ *                   Title: "Proses Stunting Terjadi Bertahap, Kenali Tanda Awalnya"
+ *                   Description: "KOMPAS.com - Stunting merupakan dampak dari kekurangan gizi kronis yang dialami bayi..."
+ *                   Author: "Lusia Kus Anna Artikel ini telah tayang di Kompas.com..."
+ *                   photoURL: "https://storage.googleapis.com/giku-bucket/article/Proses%20Stunting%20Terjadi%20Bertahap%2C%20Kenali%20Tanda%20Awalnya.jpg"
+ *                   Date: "2024-12-10"
+ *       408:
+ *         description: Request Timeout
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             example:
+ *               code: 500
+ *               message: "Internal Server Error"
  */
 
-router.post("/users/:userId/article", upload.single("image"), addArticle);
-router.get("/users/:userId/article", getArticle);
+router.get("/articles", getArticle);
 
 module.exports = router;

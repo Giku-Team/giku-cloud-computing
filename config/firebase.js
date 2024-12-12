@@ -13,6 +13,4 @@ admin.initializeApp({
 
 const db = getFirestore("giku-db");
 
-console.log(firebaseConfigPath);  // Cek apakah nilai ini sudah terdefinisi dengan benar
-
 module.exports = db;
