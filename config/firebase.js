@@ -3,6 +3,7 @@ require("dotenv").config();
 const { getFirestore } = require("firebase-admin/firestore");
 const admin = require("firebase-admin");
 const path = require("path");
+const firebaseConfigPath = path.resolve(__dirname, '../firebase-config.json');
 const serviceAccountPath = process.env.GOOGLE_APPLICATION_CREDENTIALS;
 const serviceAccount = require(path.resolve(serviceAccountPath));
 
@@ -11,5 +12,7 @@ admin.initializeApp({
 });
 
 const db = getFirestore("giku-db");
+
+console.log(firebaseConfigPath);  // Cek apakah nilai ini sudah terdefinisi dengan benar
 
 module.exports = db;

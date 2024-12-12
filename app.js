@@ -6,6 +6,7 @@ const swaggerUi = require("swagger-ui-express");
 const swaggerSpec = require("./swagger/swagger");
 const authRoutes = require("./routes/auth");
 const childRoutes = require("./routes/children");
+const articleRoutes = require("./routes/article");
 
 dotenv.config();
 
@@ -17,6 +18,7 @@ app.use(bodyParser.json());
 // Routes
 app.use("/auth", authRoutes);
 app.use("/api", childRoutes);
+app.use("/api", articleRoutes);
 
 // Swagger
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
